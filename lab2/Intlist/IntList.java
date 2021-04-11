@@ -125,7 +125,7 @@ public class IntList {
             result = helper(A);
             IntList temp = result;
             while (temp.rest != null) temp = temp.rest;
-            temp.rest = helper(B);
+            temp.rest = B;
         }
 
         return result;
