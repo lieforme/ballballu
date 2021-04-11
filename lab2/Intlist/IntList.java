@@ -113,11 +113,11 @@ public class IntList {
             result = helper(B);
         }
 
-        if (B == null && A != null){
+        else if (B == null && A != null){
             result = helper(A);
         }
 
-        if (B == null && A == null){
+        else if (B == null && A == null){
             result = null;
         }
 
