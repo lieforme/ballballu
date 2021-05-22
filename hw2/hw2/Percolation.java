@@ -94,9 +94,9 @@ public class Percolation {
         }
         if(isPercolating) return true;
         for(int i = 0; i < length; i++) {
-            if(isOpen(length - 1, i)) {
+            if(isOpen(0, i)) {
                 for(int j = 0; j < length; j++) {
-                    if(percolation.connected(translate(length-1,j),translate(0,i))) {
+                    if(isOpen(length - 1, j) && percolation.connected(translate(length-1,j),translate(0,i))) {
                         isPercolating = true;
                         return true;
                     }
