@@ -39,7 +39,7 @@ public class PercolationStats {
     }
 
     public double mean() {
-        return StdStats.mean(result);
+        return StdStats.mean(result)/(length*length);
     }
 
     public double stddev() {
@@ -58,6 +58,7 @@ public class PercolationStats {
         PercolationFactory pf = new PercolationFactory();
         PercolationStats test = new PercolationStats(2, 1000, pf);
         System.out.println(test.mean());
+        System.out.println(test.confidenceLow());
     }
 
 }
