@@ -35,7 +35,7 @@ public class Percolation {
     }
 
     private int translate(int row, int col) {
-        return row*(length-1) + col;
+        return row*length + col;
     }
 
     /** open the site (row, col) if it is not open already **/
