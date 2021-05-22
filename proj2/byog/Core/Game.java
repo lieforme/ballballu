@@ -3,11 +3,16 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 
+import java.util.Random;
+
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+
+    TETile[][] lastGame;
+    static int seed = 0;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -33,6 +38,29 @@ public class Game {
         // drawn if the same inputs had been given to playWithKeyboard().
 
         TETile[][] finalWorldFrame = null;
+        switch( input.charAt(0) ) {
+            case 'n':
+            case 'N':
+                int i;
+                for(i = 1; i < input.length(); i++) {
+                    if( input.charAt(i) == 's' ) break;
+                    seed = seed * 10 + input.charAt(i) - '0';
+                }
+                if( i == input.length() ) throw new RuntimeException("no s was input");
+                finalWorldFrame = makeNewWorld(input.substring(1, i));
+//                lastGame = finalWorldFrame;
+                break;
+            case 'Q':
+            case 'q':
+                finalWorldFrame = lastGame;
+                break;
+        }
         return finalWorldFrame;
     }
+
+    private TETile[][] makeNewWorld(String input) {
+
+        return null;
+    }
+
 }
