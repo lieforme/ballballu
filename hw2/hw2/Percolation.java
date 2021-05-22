@@ -71,6 +71,7 @@ public class Percolation {
     /** is the site (row, col) full? **/
     public boolean isFull(int row, int col)  {
         HandleError(row, col);
+        if(isOpen(row, col) == false) return false;
         if( state[row][col] == 2 ) return  true;
         for(int i = 0; i < length; i++) {
             if(isOpen(0,i) && percolation.connected(translate(0, i),translate(row ,col))) {
@@ -103,8 +104,5 @@ public class Percolation {
             }
         }
         return false;
-    }
-    public static void main(String[] args) {
-
     }
 }
