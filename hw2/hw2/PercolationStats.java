@@ -7,7 +7,7 @@ public class PercolationStats {
     private int length;
     private int[] result;
 
-    Percolation experiments;
+    private Percolation experiments;
 //    public PercolationStats(int N, int T, PercolationFactory pf)   // perform T independent experiments on an N-by-N grid
 //    public double mean()                                           // sample mean of percolation threshold
 //    public double stddev()                                         // sample standard deviation of percolation threshold
@@ -15,6 +15,7 @@ public class PercolationStats {
 //    public double confidenceHigh()                                 // high endpoint of 95% confidence interval
 
     public PercolationStats(int N, int T, PercolationFactory pf) {
+        if(N <= 0 || T <= 0) throw new IllegalArgumentException("fail");
         length = N;
         result = new int[T];
 

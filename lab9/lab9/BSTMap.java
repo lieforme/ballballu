@@ -1,7 +1,6 @@
 package lab9;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementation of interface Map61B with BST as core data structure.
@@ -9,101 +8,153 @@ import java.util.Set;
  * @author Your name here
  */
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
+    private BSTNode root = null;
+    int totalSize = 0;
+    HashSet<K> keyset = new HashSet<>();
 
-    private class Node {
-        /* (K, V) pair stored in this Node. */
-        private K key;
-        private V value;
+    private class BSTNode {
+        K key;
+        V value;
+        BSTNode left;
+        BSTNode right;
+        int size;
 
-        /* Children of this Node. */
-        private Node left;
-        private Node right;
-
-        private Node(K k, V v) {
-            key = k;
-            value = v;
+        BSTNode(K k, V v) {
+            this.key = k;
+            this.value = v;
+            this.left = null;
+            this.right = null;
+            this.size = 0;
         }
     }
 
-    private Node root;  /* Root node of the tree. */
-    private int size; /* The number of key-value pairs in the tree */
-
-    /* Creates an empty BSTMap. */
-    public BSTMap() {
-        this.clear();
-    }
-
-    /* Removes all of the mappings from this map. */
-    @Override
     public void clear() {
         root = null;
-        size = 0;
+        totalSize = 0;
     }
 
-    /** Returns the value mapped to by KEY in the subtree rooted in P.
-     *  or null if this map contains no mapping for the key.
-     */
-    private V getHelper(K key, Node p) {
-        throw new UnsupportedOperationException();
+    public boolean containsKey(K key) {
+        return findHelper(root, key) != null;
     }
 
-    /** Returns the value to which the specified key is mapped, or null if this
-     *  map contains no mapping for the key.
-     */
-    @Override
+    private BSTNode findHelper(BSTNode root, K key) {
+        if(root == null) return null;
+        else if(root.key.equals(key)) return root;
+        else if(key.compareTo(root.key) > 0) return findHelper(root.right, key);
+        else return findHelper(root.left, key);
+    }
+
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        BSTNode result = findHelper(root, key);
+        if(result == null) return null;
+        else return result.value;
     }
 
-    /** Returns a BSTMap rooted in p with (KEY, VALUE) added as a key-value mapping.
-      * Or if p is null, it returns a one node BSTMap containing (KEY, VALUE).
-     */
-    private Node putHelper(K key, V value, Node p) {
-        throw new UnsupportedOperationException();
-    }
-
-    /** Inserts the key KEY
-     *  If it is already present, updates value to be VALUE.
-     */
-    @Override
-    public void put(K key, V value) {
-        throw new UnsupportedOperationException();
-    }
-
-    /* Returns the number of key-value mappings in this map. */
-    @Override
     public int size() {
-        throw new UnsupportedOperationException();
+        return totalSize;
     }
 
-    //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
+    public void put(K key, V value) {
+        root = putHelper(key, value, root);
+        keyset.add(key);
+    }
 
-    /* Returns a Set view of the keys contained in this map. */
-    @Override
+    private BSTNode putHelper(K key, V value, BSTNode root) {
+        if( root == null ) {
+            totalSize += 1;
+            return new BSTNode(key, value);
+        }
+        else if ( key.compareTo(root.key) < 0) {
+            root.left = putHelper(key, value, root.left);
+            root.size = root.left.size + 1;
+        } else if ( key.compareTo(root.key) > 0){
+            root.right = putHelper(key, value, root.right);
+            root.size = root.right.size + 1;
+        } else root.value = value;
+        return root;
+    }
+
+    /** Only for test **/
+    public void printInOrder() {
+        Iterator<K> myIterator = iterator();
+        while(myIterator.hasNext()) {
+            System.out.println(myIterator.next());
+        }
+    }
+
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        return keyset;
     }
 
-    /** Removes KEY from the tree if present
-     *  returns VALUE removed,
-     *  null on failed removal.
-     */
-    @Override
+    V returnV;
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        returnV = null;
+        root = removeHelper(root, key);
+        return returnV;
     }
 
-    /** Removes the key-value entry for the specified key only if it is
-     *  currently mapped to the specified value.  Returns the VALUE removed,
-     *  null on failed removal.
-     **/
-    @Override
+    private BSTNode removeHelper(BSTNode root, K key) {
+        if(root == null) return null;
+        if(key.compareTo(root.key) < 0) root.left = removeHelper(root.left, key);
+        else if(key.compareTo(root.key) > 0) root.right = removeHelper(root.right, key);
+
+            // found the key!
+        else {
+            totalSize -= 1;
+            returnV = root.value;
+            keyset.remove(key);
+
+            if(root.left == null) return root.right;
+            else if(root.right == null) return root.left;
+            else root.right = swapSmallest(root.right, root);
+        }
+        return root;
+    }
+
+    private BSTNode swapSmallest(BSTNode T, BSTNode R) {
+        if( T.left == null ) {
+            R.value = T.value;
+            R.key = T.key;
+            return T.right;
+        } else {
+            T.left = swapSmallest(T.left, R);
+            return T;
+        }
+    }
+
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        returnV = null;
+        root = removeHelper(root, key);
+        return returnV;
     }
 
-    @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return new BSTiterator();
+    }
+
+    private class BSTiterator implements Iterator<K> {
+        BSTNode curNode = root;
+        Deque<BSTNode> stk = new LinkedList<>();
+
+        @Override
+        public boolean hasNext() {
+            if(curNode == null && stk.isEmpty()) return false;
+            return true;
+        }
+
+        @Override
+        public K next() {
+            if(hasNext() == false) return null;
+            else {
+                while(curNode != null) {
+                    stk.push(curNode);
+                    curNode = curNode.left;
+                }
+                curNode = stk.pop();
+                K returnValue = curNode.key;
+                curNode = curNode.right;
+                return returnValue;
+            }
+        }
     }
 }
