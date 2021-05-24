@@ -28,7 +28,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int leftIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return i * 2;
     }
 
     /**
@@ -36,7 +36,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int rightIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return i * 2 + 1;
     }
 
     /**
@@ -44,7 +44,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int parentIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return i / 2;
     }
 
     /**
@@ -108,7 +108,21 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         validateSinkSwimArg(index);
 
         /** TODO: Your code here. */
-        return;
+        if(index == 1) return;
+        int pI = parentIndex(index);
+        Node child = getNode(index);
+        Node parent = getNode(pI);
+        while (parent.myPriority > child.myPriority) {
+            swap(index, pI);
+            index = pI;
+            child = getNode(index);
+            if( index == 1 ) {
+                break;
+            } else {
+                pI = parentIndex(index);
+                parent = getNode(pI);
+            }
+        }
     }
 
     /**
@@ -119,7 +133,39 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         validateSinkSwimArg(index);
 
         /** TODO: Your code here. */
-        return;
+        while(true) {
+            Node parent = getNode(index);
+            int leftChild = leftIndex(index);
+            int rightChild = rightIndex(index);
+
+            if(!inBounds(leftChild) && !inBounds(rightChild)) {
+                break;
+            } else if(inBounds(leftChild) && !inBounds(rightChild)) {
+                Node LC = getNode(leftChild);
+                if(LC.priority() < parent.priority()) {
+                    swap(index, leftChild);
+                }
+                break;
+            } else {
+                Node RC = getNode(rightChild);
+                Node LC = getNode(leftChild);
+                if(RC.priority() > parent.priority() && LC.priority() > parent.priority()) {
+                    break;
+                } else if (LC.priority() > parent.priority() && RC.priority() < parent.priority()) {
+                    swap(rightChild, index);
+                    index = rightChild;
+                } else if (LC.priority() < parent.priority() && RC.priority() > parent.priority()) {
+                    swap(leftChild, index);
+                    index = leftChild;
+                } else if(LC.priority() < RC.priority()) {
+                    swap(leftChild, index);
+                    index = leftChild;
+                } else {
+                    swap(rightChild, index);
+                    index = rightChild;
+                }
+            }
+        }
     }
 
     /**
@@ -134,6 +180,8 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
 
         /* TODO: Your code here! */
+        contents[++size] = new Node(item, priority);
+        swim(size);
     }
 
     /**
@@ -143,7 +191,8 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public T peek() {
         /* TODO: Your code here! */
-        return null;
+        Node returnNode = getNode(1);
+        return returnNode.item();
     }
 
     /**
@@ -157,8 +206,15 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public T removeMin() {
-        /* TODO: Your code here! */
-        return null;
+        if(size <= 0) {
+            return null;
+        }
+        Node returnNode = getNode(1);
+        swap(1,size());
+        size -= 1;
+        sink(1);
+
+        return returnNode.item();
     }
 
     /**
@@ -181,7 +237,26 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public void changePriority(T item, double priority) {
         /* TODO: Your code here! */
-        return;
+        double lastPriority = -1;
+        Node curNode;
+        int i;
+        for(i = 1; i <= size; i++) {
+            curNode = getNode(i);
+            if(curNode.item() == item) {
+                lastPriority = curNode.priority();
+                curNode.myPriority = priority;
+                break;
+            }
+        }
+        if(i == size + 1) {
+            return;
+        } else {
+            if (lastPriority > priority) {
+                swim(i);
+            } else if(lastPriority < priority) {
+                sink(i);
+            }
+        }
     }
 
     /**
