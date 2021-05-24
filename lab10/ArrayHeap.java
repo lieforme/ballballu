@@ -206,14 +206,23 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public T removeMin() {
-        if(size <= 0) {
+        if(size == 0) {
             return null;
         }
+
         Node returnNode = getNode(1);
-        swap(1,size());
-        size -= 1;
-        if(size != 1) {
-            sink(1);
+
+        if(size == 1) {
+            contents[1] = null;
+            size = 0;
+            return returnNode.item();
+        } else {
+            swap(1,size());
+            contents[size] = null;
+            size -= 1;
+            if(size != 1) {
+                sink(1);
+            }
         }
         return returnNode.item();
     }
