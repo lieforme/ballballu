@@ -4,18 +4,21 @@ import edu.princeton.cs.algs4.Queue;
 public class Board implements WorldState{
     private int[] tiles1D;
     private int[] goal1D;
+    private int[][] tiles2D;
     private int N;
     private static final int BLANK =  0; //相当于C中#define的宏变量
 
     public Board(int[][] tiles) {
         N = tiles[0].length;
         tiles1D = new int[N * N];
+        tiles2D = new int[N][N];
         goal1D = new int[N * N];
 
         int t = 0;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 tiles1D[t] = tiles[i][j];
+                tiles2D[i][j] = tiles[i][j];
                 goal1D[t] = t + 1;
                 t += 1;
             }
@@ -89,7 +92,7 @@ public class Board implements WorldState{
         for(int i = 0; i < N * N; i++) {
             if(tiles1D[i] != BLANK)
             {
-                int gap = Math.abs(tiles1D[i] - goal1D[i]);
+                int gap = Math.abs(i + 1 - tiles1D[i]);
                 result += gap % N + gap / N;
             }
 
@@ -97,22 +100,12 @@ public class Board implements WorldState{
         return result;
     }
 
-
     public int estimatedDistanceToGoal() {
         return manhattan();
     }
+
     public boolean equals(Object y) {
-        if (((Board)y).N != this.N) {
-            return false;
-        }
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if( ((Board)y).tileAt(i, j) != this.tileAt(i, j) ) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return (this.tiles2D).equals(((Board)y).tiles2D);
     }
 
     public int hashCode() {
