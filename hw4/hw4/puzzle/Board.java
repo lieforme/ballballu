@@ -3,20 +3,24 @@ import edu.princeton.cs.algs4.Queue;
 
 public class Board implements WorldState{
     private int[] tiles1D;
+    private int[] goal1D;
     private int N;
     private static final int BLANK =  0; //相当于C中#define的宏变量
 
     public Board(int[][] tiles) {
         N = tiles[0].length;
         tiles1D = new int[N * N];
+        goal1D = new int[N * N];
 
         int t = 0;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 tiles1D[t] = tiles[i][j];
+                goal1D[t] = t + 1;
                 t += 1;
             }
         }
+        goal1D[N*N-1] = BLANK;
     }
     public int tileAt(int i, int j) {
         if(i < 0 || j < 0 || i > N - 1 || j > N - 1) {
@@ -73,7 +77,7 @@ public class Board implements WorldState{
     public int hamming() {
         int result = 0;
         for (int i = 0; i < N * N - 1; i++) {
-            if(tiles1D[i] != i + 1) {
+            if(tiles1D[i] != goal1D[i]) {
                 result += 1;
             }
         }
@@ -82,9 +86,13 @@ public class Board implements WorldState{
 
     public int manhattan() {
         int result = 0;
-        for(int i = 0; i < N * N - 1; i++) {
-            int gap = Math.abs(tiles1D[i] - (i + 1));
-            result += gap % N + gap / N;
+        for(int i = 0; i < N * N; i++) {
+            if(tiles1D[i] != BLANK)
+            {
+                int gap = Math.abs(tiles1D[i] - goal1D[i]);
+                result += gap % N + gap / N;
+            }
+
         }
         return result;
     }
@@ -94,6 +102,9 @@ public class Board implements WorldState{
         return manhattan();
     }
     public boolean equals(Object y) {
+        if (((Board)y).N != this.N) {
+            return false;
+        }
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 if( ((Board)y).tileAt(i, j) != this.tileAt(i, j) ) {
@@ -102,6 +113,12 @@ public class Board implements WorldState{
             }
         }
         return true;
+    }
+
+    public int hashCode() {
+        int result = tiles1D != null ? tiles1D.hashCode() : 0;
+        result = 31 * result + (goal1D != null ? goal1D.hashCode() : 0);
+        return result;
     }
 
     /** Returns the string representation of the board.
