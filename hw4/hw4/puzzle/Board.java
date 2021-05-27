@@ -93,10 +93,7 @@ public class Board implements WorldState {
             if(tiles1D[i] != BLANK)
             {
                 int expectR = tiles1D[i] / N ;
-                int expectC = tiles1D[i] % N - 1;
-                if (expectC == -1) {
-                    expectC = N - 1;
-                }
+                int expectC = tiles1D[i] % N;
                 result += Math.abs(expectR - i / N) + Math.abs(expectC - i % N);
             }
         }
