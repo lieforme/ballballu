@@ -92,9 +92,12 @@ public class Board implements WorldState {
         for(int i = 0; i < N * N; i++) {
             if(tiles1D[i] != BLANK)
             {
-                int expectR = tiles1D[i] % N;
-                int expectC = tiles1D[i] / N;
-                result += Math.abs(expectR - (i+1) % N) + Math.abs(expectC - (i+1)/N);
+                int expectR = tiles1D[i] / N ;
+                int expectC = tiles1D[i] % N - 1;
+                if (expectC == -1) {
+                    expectC = N - 1;
+                }
+                result += Math.abs(expectR - i / N) + Math.abs(expectC - i % N);
             }
         }
         return result;
@@ -105,7 +108,7 @@ public class Board implements WorldState {
     }
 
     public boolean equals(Object y) {
-        if ( y.getClass() != this.getClass() ) {
+        if ( y == null || y.getClass() != this.getClass() ) {
             return false;
         }
         if (this.N != ((Board)y).N) {
