@@ -76,9 +76,9 @@ public class QuickSort {
             Queue<Item> equal = new Queue<>();
             partition(items, pivot, less, equal, greater);
 
+            //equal不用再sort了
             less = quickSort(less);
             greater = quickSort(greater);
-            equal = quickSort(equal);
 
             items = catenate(less, equal);
             items = catenate(items, greater);
