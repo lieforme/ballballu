@@ -1,4 +1,7 @@
 import edu.princeton.cs.algs4.Queue;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class QuickSort {
     /**
@@ -48,12 +51,56 @@ public class QuickSort {
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
         // Your code here!
+        while (!unsorted.isEmpty()) {
+            Item cur = unsorted.dequeue();
+            if (cur.compareTo(pivot) < 0) {
+                less.enqueue(cur);
+            } else if (cur.compareTo(pivot) > 0) {
+                greater.enqueue(cur);
+            } else {
+                equal.enqueue(cur);
+            }
+        }
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
         // Your code here!
+        if (items == null || items.size() == 1) {
+            return items;
+        } else {
+            Item pivot = getRandomItem(items);
+            Queue<Item> less = new Queue<>();
+            Queue<Item> greater = new Queue<>();
+            Queue<Item> equal = new Queue<>();
+            partition(items, pivot, less, greater, equal);
+
+            less = quickSort(less);
+            greater = quickSort(greater);
+            equal = quickSort(equal);
+
+            items = catenate(less, equal);
+            items = catenate(items, greater);
+        }
         return items;
+    }
+
+    @Test
+    public static void main(String[] args) {
+        MergeSort mergesort = new MergeSort();
+        Queue<String> students = new Queue<>();
+
+        students.enqueue("FlingPosse");
+        students.enqueue("Ramuda");
+        students.enqueue("Gentaro");
+        students.enqueue("Dice");
+
+        students = mergesort.mergeSort(students);
+
+        assertEquals(students.dequeue(), "Dice");
+        assertEquals(students.dequeue(),"FlingPosse");
+        assertEquals(students.dequeue(),"Gentaro");
+        assertEquals(students.dequeue(),"Ramuda");
     }
 }

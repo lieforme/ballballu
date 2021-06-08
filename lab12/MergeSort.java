@@ -1,4 +1,9 @@
 import edu.princeton.cs.algs4.Queue;
+import org.junit.Test;
+
+import java.util.Iterator;
+
+import static org.junit.Assert.*;
 
 public class MergeSort {
     /**
@@ -35,7 +40,14 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        Queue<Queue<Item>> myQueue = new Queue<>();
+        Iterator<Item> myIterator = items.iterator();
+        while (myIterator.hasNext()) {
+            Queue<Item> temp = new Queue<>();
+            temp.enqueue(myIterator.next());
+            myQueue.enqueue(temp);
+        }
+        return myQueue;
     }
 
     /**
@@ -54,13 +66,42 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        Queue<Item> items = new Queue<>();
+        while (!q1.isEmpty() || !q2.isEmpty()) {
+            items.enqueue(getMin(q1,q2));
+        }
+        return items;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+        Queue<Queue<Item>> sortedQueue = makeSingleItemQueues(items);
+        while (sortedQueue.size() > 1) {
+            Queue<Item> q1 = sortedQueue.dequeue();
+            Queue<Item> q2 = sortedQueue.dequeue();
+            sortedQueue.enqueue(mergeSortedQueues(q1, q2));
+        }
+        return sortedQueue.dequeue();
     }
+
+    @Test
+    public static void main(String[] args) {
+        MergeSort mergesort = new MergeSort();
+        Queue<String> students = new Queue<>();
+
+        students.enqueue("FlingPosse");
+        students.enqueue("Ramuda");
+        students.enqueue("Gentaro");
+        students.enqueue("Dice");
+
+        students = mergesort.mergeSort(students);
+
+        assertEquals(students.dequeue(), "Dice");
+        assertEquals(students.dequeue(),"FlingPosse");
+        assertEquals(students.dequeue(),"Gentaro");
+        assertEquals(students.dequeue(),"Ramuda");
+    }
+
 }

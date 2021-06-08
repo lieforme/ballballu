@@ -5,39 +5,39 @@ public class Board implements WorldState {
     private int[] tiles1D;
     private int[] goal1D;
     private int[][] tiles2D;
-    private int N;
+    private int NN;
     private static final int BLANK =  0; //相当于C中#define的宏变量
 
     public Board(int[][] tiles) {
-        N = tiles[0].length;
-        tiles1D = new int[N * N];
-        tiles2D = new int[N][N];
-        goal1D = new int[N * N];
+        NN = tiles[0].length;
+        tiles1D = new int[NN * NN];
+        tiles2D = new int[NN][NN];
+        goal1D = new int[NN * NN];
 
         int t = 0;
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
+        for (int i = 0; i < NN; i++) {
+            for (int j = 0; j < NN; j++) {
                 tiles1D[t] = tiles[i][j];
                 tiles2D[i][j] = tiles[i][j];
                 goal1D[t] = t + 1;
                 t += 1;
             }
         }
-        goal1D[N*N-1] = BLANK;
+        goal1D[NN * NN - 1] = BLANK;
     }
     public int tileAt(int i, int j) {
-        if(i < 0 || j < 0 || i > N - 1 || j > N - 1) {
+        if (i < 0 || j < 0 || i > NN - 1 || j > NN - 1) {
             throw new IndexOutOfBoundsException("illegal i or j");
         }
         return tiles1D[translate(i, j)];
     }
 
     private int translate(int i, int j) {
-        return i * N + j;
+        return i * NN + j;
     }
 
     public int size() {
-        return N;
+        return NN;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class Board implements WorldState {
         int blankY = -1;
         for (int i = 0; i < s; i++) {
             for (int j = 0; j < s; j++) {
-                if(tileAt(i, j) == BLANK) {
+                if (tileAt(i, j) == BLANK) {
                     blankX = i;
                     blankY = j;
                     break;
@@ -64,7 +64,7 @@ public class Board implements WorldState {
 
         for (int i = 0; i < s; i++) {
             for (int j = 0; j < s; j++) {
-                if ( Math.abs(i - blankX) + Math.abs(j - blankY) - 1 == 0 ) {
+                if ( Math.abs( i - blankX ) + Math.abs( j - blankY ) - 1 == 0 ) {
                     n[blankX][blankY] = n[i][j];
                     n[i][j] = BLANK;
                     Board neighbor = new Board(n);
@@ -79,8 +79,8 @@ public class Board implements WorldState {
 
     public int hamming() {
         int result = 0;
-        for (int i = 0; i < N * N - 1; i++) {
-            if(tiles1D[i] != goal1D[i]) {
+        for (int i = 0; i < NN * NN - 1; i++) {
+            if ( tiles1D[i] != goal1D[i] ) {
                 result += 1;
             }
         }
@@ -89,12 +89,11 @@ public class Board implements WorldState {
 
     public int manhattan() {
         int result = 0;
-        for(int i = 0; i < N * N; i++) {
-            if(tiles1D[i] != BLANK)
-            {
-                int expectR = (tiles1D[i] - 1) / N;
-                int expectC = (tiles1D[i] - 1) % N;
-                result += Math.abs(expectR - i / N) + Math.abs(expectC - i % N);
+        for (int i = 0; i < NN * NN; i++) {
+            if ( tiles1D[i] != BLANK ) {
+                int expectR = (tiles1D[i] - 1) / NN;
+                int expectC = (tiles1D[i] - 1) % NN;
+                result += Math.abs(expectR - i / NN) + Math.abs(expectC - i % NN);
             }
         }
         return result;
@@ -104,16 +103,16 @@ public class Board implements WorldState {
         return manhattan();
     }
 
-    public boolean equals(Object y) {
+    public boolean equals ( Object y ) {
         if ( y == null || y.getClass() != this.getClass() ) {
             return false;
         }
-        if (this.N != ((Board)y).N) {
+        if (this.NN != ( (Board) y).NN) {
             return false;
         }
-        for (int i = 0; i < N ; i++) {
-            for (int j = 0; j < N; j++) {
-                if(this.tileAt(i, j) != ((Board)y).tileAt(i, j)) {
+        for (int i = 0; i < NN; i++) {
+            for (int j = 0; j < NN; j++) {
+                if ( this.tileAt(i, j) != ( (Board) y).tileAt(i, j) ) {
                     return false;
                 }
             }
