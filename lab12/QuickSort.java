@@ -51,14 +51,13 @@ public class QuickSort {
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
         // Your code here!
-        while (!unsorted.isEmpty()) {
-            Item cur = unsorted.dequeue();
-            if (cur.compareTo(pivot) < 0) {
-                less.enqueue(cur);
-            } else if (cur.compareTo(pivot) > 0) {
-                greater.enqueue(cur);
+        for (Item item :unsorted) {
+            if (item.compareTo(pivot) < 0) {
+                less.enqueue(item);
+            } else if (item.compareTo(pivot) > 0) {
+                greater.enqueue(item);
             } else {
-                equal.enqueue(cur);
+                equal.enqueue(item);
             }
         }
     }
