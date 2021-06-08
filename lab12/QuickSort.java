@@ -67,14 +67,14 @@ public class QuickSort {
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
         // Your code here!
-        if (items == null || items.size() == 1) {
+        if (items.size() == 0 || items.size() == 1) {
             return items;
         } else {
             Item pivot = getRandomItem(items);
             Queue<Item> less = new Queue<>();
             Queue<Item> greater = new Queue<>();
             Queue<Item> equal = new Queue<>();
-            partition(items, pivot, less, greater, equal);
+            partition(items, pivot, less, equal, greater);
 
             less = quickSort(less);
             greater = quickSort(greater);
@@ -88,7 +88,7 @@ public class QuickSort {
 
     @Test
     public static void main(String[] args) {
-        MergeSort mergesort = new MergeSort();
+        QuickSort quicksort = new QuickSort();
         Queue<String> students = new Queue<>();
 
         students.enqueue("FlingPosse");
@@ -96,7 +96,7 @@ public class QuickSort {
         students.enqueue("Gentaro");
         students.enqueue("Dice");
 
-        students = mergesort.mergeSort(students);
+        students = quicksort.quickSort(students);
 
         assertEquals(students.dequeue(), "Dice");
         assertEquals(students.dequeue(),"FlingPosse");
